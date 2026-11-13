@@ -10,12 +10,12 @@ Access to the hosted service is invite only for now: ask at team@ayinbox.com.
 
 ## Install
 
-Not on the Swift Package Index yet, and no version is tagged yet. Until then, depend on the `main` branch of this repository with Swift Package Manager:
+Add the package with Swift Package Manager:
 
 ```swift
 // Package.swift
 dependencies: [
-    .package(url: "https://github.com/ayinbox/ayinbox-swift.git", branch: "main"),
+    .package(url: "https://github.com/ayinbox/ayinbox-swift.git", from: "0.1.0"),
 ],
 targets: [
     .target(name: "MyApp", dependencies: [.product(name: "AyInbox", package: "ayinbox-swift")]),
