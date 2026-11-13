@@ -1,0 +1,36 @@
+name: Release
+
+# Swift Package Manager resolves versions from git tags, so the tag is the release.
+# This workflow checks the tagged commit and creates the GitHub release for it.
+on:
+  push:
+    tags:
+      - "v*"
+      - "[0-9]+.[0-9]+.[0-9]+*"
+
+permissions:
+  contents: write
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    container: swift:5.10
+    steps:
+      - uses: actions/checkout@v4
+      - name: Check the tag matches AyInbox.version
+        run: |
+          tag="${GITHUB_REF_NAME#v}"
+          grep -q "static let version = \"$tag\"" Sources/AyInbox/Client.swift || {
+            echo "Tag $GITHUB_REF_NAME does not match AyInbox.version"; exit 1; }
+      - run: swift build
+      - run: swift test
+
+  release:
+    needs: test
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Create the GitHub release
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: gh release create "$GITHUB_REF_NAME" --title "$GITHUB_REF_NAME" --notes "See CHANGELOG.md." --verify-tag
